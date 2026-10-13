@@ -2,6 +2,11 @@
 import { useState, useEffect } from "react";
 import "./index.css";
 
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? "https://autocare-backend-uy8p.onrender.com" : "http://localhost:8080")
+).replace(/\/+$/, "");
+
 function App() {
   const [page, setPage] = useState("home");
   const [currentUser, setCurrentUser] = useState(() => {
@@ -51,7 +56,7 @@ const authHeaders = () => {
 
 useEffect(() => {
   if (!currentUser?.token) return;
-  fetch("http://localhost:8080/api/vehicles", { headers: authHeaders() })
+  fetch(`${API_BASE_URL}/api/vehicles`, { headers: authHeaders() })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to load vehicles");
@@ -70,7 +75,7 @@ useEffect(() => {
 
 useEffect(() => {
   if (!currentUser?.token) return;
-  fetch("http://localhost:8080/api/bookings", { headers: authHeaders() })
+  fetch(`${API_BASE_URL}/api/bookings`, { headers: authHeaders() })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to load bookings");
@@ -94,7 +99,7 @@ const handleAuthSubmit = async (event) => {
 
   const isRegister = page === "register";
   try {
-    const response = await fetch(`http://localhost:8080/api/auth/${isRegister ? "register" : "login"}`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/${isRegister ? "register" : "login"}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(authForm),
@@ -128,7 +133,7 @@ const requireLogin = (destination) => {
 
 const handleLogout = async () => {
   try {
-    await fetch("http://localhost:8080/api/auth/logout", {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
       method: "POST",
       headers: authHeaders(),
     });
@@ -157,7 +162,7 @@ const handleVehicleSubmit = async (event) => {
 
     if (editingId !== null) {
       response = await fetch(
-        `http://localhost:8080/api/vehicles/${editingId}`,
+        `${API_BASE_URL}/api/vehicles/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -169,7 +174,7 @@ const handleVehicleSubmit = async (event) => {
       );
     } else {
       response = await fetch(
-        "http://localhost:8080/api/vehicles",
+        `${API_BASE_URL}/api/vehicles`,
         {
           method: "POST",
           headers: {
@@ -226,7 +231,7 @@ const handleEditVehicle = (vehicle) => {
 const handleDeleteVehicle = async (id) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/vehicles/${id}`,
+      `${API_BASE_URL}/api/vehicles/${id}`,
       {
         method: "DELETE",
         headers: authHeaders(),
@@ -279,7 +284,7 @@ const handleBookingSubmit = async (event) => {
 
   try {
     const response = await fetch(
-      "http://localhost:8080/api/bookings",
+      `${API_BASE_URL}/api/bookings`,
       {
         method: "POST",
         headers: {
@@ -320,7 +325,7 @@ const handleBookingSubmit = async (event) => {
 const handleStatusChange = async (bookingId, newStatus) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/api/bookings/${bookingId}/status`,
+      `${API_BASE_URL}/api/bookings/${bookingId}/status`,
       {
         method: "PUT",
         headers: {
@@ -365,7 +370,7 @@ const handleDeleteBooking = async (bookingId) => {
 
   try {
     const response = await fetch(
-      `http://localhost:8080/api/bookings/${bookingId}`,
+      `${API_BASE_URL}/api/bookings/${bookingId}`,
       {
         method: "DELETE",
         headers: authHeaders(),
